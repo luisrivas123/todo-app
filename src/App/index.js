@@ -8,9 +8,11 @@ import { TodoItem } from '../TodoItem';
 import { TodosError } from '../TodosError';
 import { TodosLoading } from '../TodosLoading';
 import { EmptyTodos } from '../EmptyTodos';
+// import { EmptySearchResults} from '../EmptySearchResults'
 import { TodoForm } from '../TodoForm';
 import { CreateTodoButton } from '../CreateTodoButton';
 import { Modal } from '../Modal';
+
 
 function App() {
   const {
@@ -26,6 +28,7 @@ function App() {
     searchValue, 
     setSearchValue,
     addTodo,
+    
   } = useTodos();
 
   return (
@@ -41,12 +44,22 @@ function App() {
         />
       </TodoHeader>
 
-      <TodoList>
-        {error && <TodosError error={error} />}
-        {loading && <TodosLoading />}
-        {(!loading && !searchedTodos.length) && <EmptyTodos />}
-        
-        {searchedTodos.map(todo => (
+      <TodoList
+        // Propiedades
+        error={error}
+        loading={loading}
+        totalTodos={totalTodos}
+        searchedTodos={searchedTodos}
+        searchText={searchValue}
+        // Renderiza diferentes estados reder prop
+        onError={() => <TodosError />}
+        onLoading={() => <TodosLoading />}
+        onEmptyTodos={() => <EmptyTodos />}
+        // onEmptySearchResults={(searchText) => <EmptySearchResults />}
+        onEmptySearchResults={
+          (searchText) => <p>No hay resultados para {searchText}</p>
+        }
+        render={todo => (
           <TodoItem
             key={todo.text}
             text={todo.text}
@@ -54,7 +67,18 @@ function App() {
             onComplete={() => completeTodo(todo.text)}
             onDelete={() => deleteTodo(todo.text)}
           />
-        ))}
+        )}
+      >
+        {/* Render function */}
+        {/* {todo => (
+          <TodoItem
+             key={todo.text}
+             text={todo.text}
+             completed={todo.completed}
+             onComplete={() => completeTodo(todo.text)}
+             onDelete={() => deleteTodo(todo.text)}
+           />
+         )} */}
       </TodoList>
 
       {!!openModal && (
